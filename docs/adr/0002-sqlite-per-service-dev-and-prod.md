@@ -1,0 +1,3 @@
+# SQLite Per Service, Dev and Prod
+
+Each microservice owns a local SQLite database file, in development *and* in production. We chose SQLite over a client–server database (Postgres, MySQL) to eliminate infrastructure setup cost — no Docker containers for the database layer, no connection pooling, no network fallacies. The data volume early on is trivially small (a handful of accounts and transfers per day during development), and the read/write pattern is serialised by a single process per service. This keeps the dev loop tight and the deployment surface minimal. If the system outgrows SQLite — concurrent writes contending, or the dataset grows beyond memory — we plan to swap the storage adapter behind the repository interface, not before.
