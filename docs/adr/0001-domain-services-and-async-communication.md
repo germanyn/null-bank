@@ -1,0 +1,3 @@
+# Domain Services with Async Event Communication
+
+We split the system into three domain-aligned services (customer-service, account-service, transfer-service) communicating exclusively via async events through a message broker, using a two-phase reservation pattern for transfers. This lets each service own its data and scale independently, at the cost of eventual consistency. We rejected a layer-based split (API/core/fraud) and synchronous HTTP calls because domain coupling would make independent deployment harder, and the two-phase reservation gives us room to add fraud checks in the Pending window without blocking the caller.
