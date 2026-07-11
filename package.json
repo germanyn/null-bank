@@ -20,6 +20,8 @@
   "workspaces": [
     "apps/account/svc",
     "apps/account/mfe",
+    "apps/customer/svc",
+    "apps/customer/mfe",
     "shared/*"
   ],
   "dependencies": {
