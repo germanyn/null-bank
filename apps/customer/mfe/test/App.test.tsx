@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { App } from '../src/App';
 
 describe('App', () => {
@@ -17,7 +18,6 @@ describe('App', () => {
   });
 
   it('switches to search view when search button is clicked', async () => {
-    const userEvent = (await import('@testing-library/user-event')).default;
     const user = userEvent.setup();
 
     render(<App />);
