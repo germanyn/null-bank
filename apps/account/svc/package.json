@@ -13,12 +13,15 @@
     "lint": "echo 'No linter configured'"
   },
   "dependencies": {
+    "@null-bank/shared-events": "workspace:*",
+    "amqplib": "^0.10.4",
     "fastify": "5.1.0",
     "@fastify/cors": "10.0.1",
     "better-sqlite3": "11.6.0",
     "bcryptjs": "2.4.3"
   },
   "devDependencies": {
+    "@types/amqplib": "^0.10.5",
     "vitest": "2.1.4",
     "tsx": "4.19.2",
     "typescript": "5.6.3",
