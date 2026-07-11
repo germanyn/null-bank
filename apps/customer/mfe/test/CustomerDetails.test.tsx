@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { CustomerDetails } from '../src/components/CustomerDetails';
 
 describe('CustomerDetails', () => {
@@ -65,8 +66,7 @@ describe('CustomerDetails', () => {
       expect(screen.getByText(/João Silva/)).toBeInTheDocument();
     });
 
-    const user = (await import('@testing-library/user-event')).default;
-    await user.setup();
+    const user = userEvent.setup();
     await user.click(screen.getByRole('button', { name: /back to search/i }));
 
     expect(onBack).toHaveBeenCalled();
