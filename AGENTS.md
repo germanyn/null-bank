@@ -11,3 +11,7 @@ Default five-role label vocabulary (needs-triage, needs-info, ready-for-agent, r
 ### Domain docs
 
 Single-context layout with CONTEXT.md at root and docs/adr/. See `docs/agents/domain.md`.
+
+### Security rules
+
+- **NEVER** read, open, or display the contents of `.env` files. These files contain secrets and credentials.
