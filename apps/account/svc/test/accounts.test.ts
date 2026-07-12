@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest';
+import { describe, it, expect, beforeAll, afterAll, beforeEach, afterEach } from 'vitest';
 import { buildApp } from '../src/app';
 import { createDb } from '../src/db';
 import Database from 'better-sqlite3';
@@ -157,5 +157,37 @@ describe('Account Service', () => {
 
       expect(loginRes.statusCode).toBe(401);
     });
+  });
+});
+
+describe('Port Configuration', () => {
+  afterEach(() => {
+    delete process.env.ACCOUNT_SVC_PORT;
+  });
+
+  it('can start on a custom port', async () => {
+    const port = 3999;
+    process.env.ACCOUNT_SVC_PORT = String(port);
+
+    const db = createDb();
+    const app = buildApp(db);
+
+    await app.ready();
+    const address = await app.listen({ port, host: '127.0.0.1' });
+
+    expect(address).toContain(String(port));
+
+    await app.close();
+    db.close();
+  });
+
+  it('resolves port from ACCOUNT_SVC_PORT env var', () => {
+    process.env.ACCOUNT_SVC_PORT = '4123';
+    expect(Number(process.env.ACCOUNT_SVC_PORT ?? 3100)).toBe(4123);
+  });
+
+  it('falls back to default port 3100 when ACCOUNT_SVC_PORT is unset', () => {
+    delete process.env.ACCOUNT_SVC_PORT;
+    expect(Number(process.env.ACCOUNT_SVC_PORT ?? 3100)).toBe(3100);
   });
 });
