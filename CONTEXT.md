@@ -12,7 +12,9 @@ _Avoid_: Wire transfer, external payment, remittance, PIX, ACH
 An earmark of funds in the source account during a two-phase settlement. Reserved funds are unavailable for other transfers until settled or released.
 
 **Account**:
-A container of funds owned by a single customer, identified by an account number.
+A container of funds owned by exactly one customer, identified by a unique account number. Each customer (by CPF/CNPJ) may hold at most one account.
+_Avoid_: Wallet, balance sheet Each Customer may hold at most one Account.
+_Avoid_: Wallet, balance, pocket
 
 **Account Holder**:
 The customer who owns an account. Can be either a natural person (CPF) or a legal entity (CNPJ).

@@ -6,15 +6,15 @@ Review the code changes on branch `{{BRANCH}}` and improve code clarity, consist
 
 ## Branch diff
 
-!`git diff {{TARGET_BRANCH}}...{{BRANCH}}`
+Run `git diff {{TARGET_BRANCH}}...{{BRANCH}}` to see the full diff of changes.
 
 ## Commits on this branch
 
-!`git log {{TARGET_BRANCH}}..{{BRANCH}} --oneline`
+Run `git log {{TARGET_BRANCH}}..{{BRANCH}} --oneline` to see commits on this branch.
 
 # REVIEW PROCESS
 
-1. **Understand the change**: Read the diff and commits above to understand the intent.
+1. **Understand the change**: Run the git diff and git log commands above, then read the output to understand the intent.
 
 2. **Analyze for improvements**: Look for opportunities to:
    - Reduce unnecessary complexity and nesting
