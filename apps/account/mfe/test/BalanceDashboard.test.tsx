@@ -24,7 +24,7 @@ describe('BalanceDashboard', () => {
     render(<BalanceDashboard accountNumber="1234567890" />);
 
     await waitFor(() => {
-      expect(screen.getByTestId('balance-value')).toHaveTextContent(/1\.500/);
+      expect(screen.getByTestId('balance-value')).toHaveTextContent(/\$1,500/);
     });
   });
 
