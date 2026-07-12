@@ -1,6 +1,6 @@
 # Port Conventions
 
-Ports are configured via environment variables with hardcoded fallbacks. The root `.env` file is the single source of truth.
+Ports are configured via environment variables with hardcoded fallbacks. The root `.env.example` file documents the defaults and is committed to the repo. Copy it to `.env` (which is gitignored) to configure local ports.
 
 Port 3000 is explicitly avoided — it conflicts with many common development tools (React default, Create React App, etc.).
 
@@ -28,5 +28,5 @@ Each domain gets a 100-port range. SVC ports start at 3100, MFE ports start at 4
 ## Adding a New Domain
 
 1. Pick the next available 100-port range from the table above.
-2. Add `*_SVC_PORT` and `*_MFE_PORT` entries to the root `.env`.
+2. Add `*_SVC_PORT` and `*_MFE_PORT` entries to both `.env.example` and `.env`.
 3. Update this table with the new domain.
