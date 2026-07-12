@@ -3,6 +3,8 @@ packages:
   - "apps/account/mfe"
   - "apps/customer/svc"
   - "apps/customer/mfe"
+  - "apps/transfer/svc"
+  - "apps/transfer/mfe"
   - "shared/*"
 allowBuilds:
   better-sqlite3: true
