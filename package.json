@@ -10,7 +10,7 @@
     "dev:account-mfe": "nx dev @null-bank/account-mfe",
     "dev:account": "nx run-many --projects=@null-bank/account-svc,@null-bank/account-mfe --target=dev --parallel",
     "sc": "tsx .sandcastle/main.mts",
-    "sc:docker": "sandcastle docker build-image"
+    "sc:build": "sandcastle docker build-image"
   },
   "devDependencies": {
     "@ai-hero/sandcastle": "^0.12.0",

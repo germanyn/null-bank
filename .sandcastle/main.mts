@@ -54,13 +54,21 @@ const MAX_ITERATIONS = 10;
 // Hooks run inside the sandbox before the agent starts each iteration.
 // npm install ensures the sandbox always has fresh dependencies.
 const hooks = {
-  // sandbox: { onSandboxReady: [{ command: "pnpm install" }] },
+  sandbox: {
+    onSandboxReady: [
+      {
+        command:
+          "pnpm install 2>&1 | tail -30 || (echo 'pnpm install failed' && exit 1)",
+        timeoutMs: 300_000,
+      },
+    ],
+  },
 };
 
 // Copy node_modules from the host into the worktree before each sandbox
 // starts. Avoids a full npm install from scratch; the hook above handles
 // platform-specific binaries and any packages added since the last copy.
-const copyToWorktree = ["node_modules"];
+const copyToWorktree: string[] = [];
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -69,10 +77,7 @@ const copyToWorktree = ["node_modules"];
 type PlanIssue = z.infer<typeof planSchema>["issues"][number];
 
 /** Return the base branch for a stacked PR targeting `issue`. */
-function resolveBaseBranch(
-  issue: PlanIssue,
-  allIssues: PlanIssue[],
-): string {
+function resolveBaseBranch(issue: PlanIssue, allIssues: PlanIssue[]): string {
   const depBranch = issue.blocked_by
     .map((depId) => allIssues.find((d) => d.id === depId)?.branch)
     .find((b): b is string => b !== undefined);
