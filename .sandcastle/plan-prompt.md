@@ -29,7 +29,7 @@ For each unblocked issue, assign a branch name using the exact format `sandcastl
 Output your plan as a JSON object wrapped in `<plan>` tags:
 
 <plan>
-{"issues": [{"id": "42", "title": "Fix auth bug", "branch": "sandcastle/issue-42"}]}
+{"issues": [{"id": "42", "title": "Fix auth bug", "branch": "sandcastle/issue-42", "blocked_by": []}]}
 </plan>
 
 Include only unblocked issues. If every issue is blocked, include the single highest-priority candidate (the one with the fewest or weakest dependencies).

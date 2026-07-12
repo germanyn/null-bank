@@ -3,15 +3,18 @@
 // This template drives a multi-phase workflow:
 //   Phase 1 (Plan):             An opus agent analyzes open issues, builds a
 //                               dependency graph, and outputs a <plan> JSON
-//                               listing unblocked issues with branch names.
+//                               listing unblocked issues with branch names and
+//                               blocked_by edges.
 //   Phase 2 (Execute + Review): For each issue, a sandbox is created via
 //                               createSandbox(). The implementer runs first
 //                               (100 iterations). If it produces commits, a
 //                               reviewer runs in the same sandbox on the same
 //                               branch (1 iteration). All issue pipelines run
 //                               concurrently via Promise.allSettled().
-//   Phase 3 (Merge):            A single agent merges all completed branches
-//                               into the current branch.
+//   Phase 3 (PR Creator):      A single agent pushes branches and creates
+//                               stacked PRs via gh pr create. Dependent
+//                               issues target the previous PR's branch,
+//                               forming a chain.
 //
 // The outer loop repeats up to MAX_ITERATIONS times so that newly unblocked
 // issues are picked up after each round of merges.
@@ -31,7 +34,12 @@ import { z } from "zod";
 // https://standardschema.dev.
 const planSchema = z.object({
   issues: z.array(
-    z.object({ id: z.string(), title: z.string(), branch: z.string() }),
+    z.object({
+      id: z.string(),
+      title: z.string(),
+      branch: z.string(),
+      blocked_by: z.array(z.string()),
+    }),
   ),
 });
 
@@ -197,30 +205,45 @@ for (let iteration = 1; iteration <= MAX_ITERATIONS; iteration++) {
   }
 
   // -------------------------------------------------------------------------
-  // Phase 3: Merge
+  // Phase 3: Create stacked PRs
   //
-  // One agent merges all completed branches into the current branch,
-  // resolving any conflicts and running tests to confirm everything works.
+  // One agent pushes each completed branch and creates a PR. Dependent issues
+  // target the previous PR's branch, forming a chain. Before creating a stacked
+  // PR the agent merges the base branch into the dependent branch, resolving
+  // conflicts and running tests so every PR is ready to merge.
   //
-  // The {{BRANCHES}} and {{ISSUES}} prompt arguments are lists that the agent
-  // uses to know which branches to merge and which issues to close.
+  // {{DEPENDENCIES}} maps each branch to its base branch (the branch it should
+  // target). Leaf branches (no dependents) target the main branch.
   // -------------------------------------------------------------------------
   await sandcastle.run({
     hooks,
     sandbox: docker(),
-    name: "merger",
+    name: "pr-creator",
     maxIterations: 1,
     agent: sandcastle.opencode("opencode/big-pickle"),
-    promptFile: "./.sandcastle/merge-prompt.md",
+    promptFile: "./.sandcastle/pr-creator-prompt.md",
     promptArgs: {
       // A markdown list of branch names, one per line.
       BRANCHES: completedBranches.map((b) => `- ${b}`).join("\n"),
       // A markdown list of issue IDs and titles, one per line.
       ISSUES: completedIssues.map((i) => `- ${i.id}: ${i.title}`).join("\n"),
+      // Dependency edges: for each completed branch, list its base branch.
+      DEPENDENCIES: completedIssues
+        .map((i) => {
+          const depBranches = i.blocked_by
+            .map((depId) =>
+              completedIssues.find((d) => d.id === depId)?.branch,
+            )
+            .filter(Boolean);
+          return depBranches.length > 0
+            ? `- ${i.branch} → base: ${depBranches[0]}`
+            : `- ${i.branch} → base: main`;
+        })
+        .join("\n"),
     },
   });
 
-  console.log("\nBranches merged.");
+  console.log("\nStacked PRs created.");
 }
 
 console.log("\nAll done.");
