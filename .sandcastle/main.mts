@@ -1,4 +1,4 @@
-// Parallel Planner with Review — four-phase orchestration loop
+// Parallel Planner with Review — three-phase orchestration loop
 //
 // This template drives a multi-phase workflow:
 //   Phase 1 (Plan):             An opus agent analyzes open issues, builds a
@@ -17,7 +17,7 @@
 //                               forming a chain.
 //
 // The outer loop repeats up to MAX_ITERATIONS times so that newly unblocked
-// issues are picked up after each round of merges.
+// issues are picked up after each round of PR creation.
 //
 // Usage:
 //   npx tsx .sandcastle/main.mts
@@ -47,7 +47,7 @@ const planSchema = z.object({
 // Configuration
 // ---------------------------------------------------------------------------
 
-// Maximum number of plan→execute→merge cycles before stopping.
+// Maximum number of plan→execute→PR cycles before stopping.
 // Raise this if your backlog is large; lower it for a quick smoke-test run.
 const MAX_ITERATIONS = 10;
 
@@ -61,6 +61,24 @@ const hooks = {
 // starts. Avoids a full npm install from scratch; the hook above handles
 // platform-specific binaries and any packages added since the last copy.
 const copyToWorktree = ["node_modules"];
+
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+
+type PlanIssue = z.infer<typeof planSchema>["issues"][number];
+
+/** Return the base branch for a stacked PR targeting `issue`. */
+function resolveBaseBranch(
+  issue: PlanIssue,
+  allIssues: PlanIssue[],
+): string {
+  const depBranch = issue.blocked_by
+    .map((depId) => allIssues.find((d) => d.id === depId)?.branch)
+    .find((b): b is string => b !== undefined);
+
+  return depBranch ?? "main";
+}
 
 // ---------------------------------------------------------------------------
 // Main loop
@@ -154,7 +172,7 @@ for (let iteration = 1; iteration <= MAX_ITERATIONS; iteration++) {
             },
           });
 
-          // Merge commits from both runs so the merge phase sees all of them.
+          // Combine commits from both runs so Phase 3 sees all of them.
           // Each sandbox.run() only returns commits from its own run.
           return {
             ...review,
@@ -178,8 +196,8 @@ for (let iteration = 1; iteration <= MAX_ITERATIONS; iteration++) {
     }
   }
 
-  // Only pass branches that actually produced commits to the merge phase.
-  // An agent that ran successfully but made no commits has nothing to merge.
+  // Only pass branches that actually produced commits to Phase 3.
+  // An agent that ran successfully but made no commits has nothing to PR.
   const completedIssues = settled
     .map((outcome, i) => ({ outcome, issue: issues[i]! }))
     .filter(
@@ -199,8 +217,8 @@ for (let iteration = 1; iteration <= MAX_ITERATIONS; iteration++) {
   }
 
   if (completedBranches.length === 0) {
-    // All agents ran but none made commits — nothing to merge this cycle.
-    console.log("No commits produced. Nothing to merge.");
+    // All agents ran but none made commits — nothing to create PRs for.
+    console.log("No commits produced. Nothing to create PRs for.");
     continue;
   }
 
@@ -230,14 +248,8 @@ for (let iteration = 1; iteration <= MAX_ITERATIONS; iteration++) {
       // Dependency edges: for each completed branch, list its base branch.
       DEPENDENCIES: completedIssues
         .map((i) => {
-          const depBranches = i.blocked_by
-            .map((depId) =>
-              completedIssues.find((d) => d.id === depId)?.branch,
-            )
-            .filter(Boolean);
-          return depBranches.length > 0
-            ? `- ${i.branch} → base: ${depBranches[0]}`
-            : `- ${i.branch} → base: main`;
+          const baseBranch = resolveBaseBranch(i, completedIssues);
+          return `- ${i.branch} → base: ${baseBranch}`;
         })
         .join("\n"),
     },
