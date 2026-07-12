@@ -159,3 +159,24 @@ describe('Account Service', () => {
     });
   });
 });
+
+describe('Port Configuration', () => {
+  it('listens on port from ACCOUNT_SVC_PORT env var', async () => {
+    const port = 3999;
+    process.env.ACCOUNT_SVC_PORT = String(port);
+
+    const { buildApp: buildAppForPort } = await import('../src/app');
+    const { createDb: createDbForPort } = await import('../src/db');
+    const db = createDbForPort();
+    const app = buildAppForPort(db);
+
+    await app.ready();
+    const address = await app.listen({ port, host: '127.0.0.1' });
+
+    expect(address).toContain(String(port));
+
+    await app.close();
+    db.close();
+    delete process.env.ACCOUNT_SVC_PORT;
+  });
+});

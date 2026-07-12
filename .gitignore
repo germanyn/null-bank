@@ -5,5 +5,4 @@ data
 *.db
 .pnpm-store
 
-.env
 .env.local
