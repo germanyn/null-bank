@@ -1,20 +1,23 @@
-// Parallel Planner with Review — four-phase orchestration loop
+// Parallel Planner with Review — three-phase orchestration loop
 //
 // This template drives a multi-phase workflow:
 //   Phase 1 (Plan):             An opus agent analyzes open issues, builds a
 //                               dependency graph, and outputs a <plan> JSON
-//                               listing unblocked issues with branch names.
+//                               listing unblocked issues with branch names and
+//                               blocked_by edges.
 //   Phase 2 (Execute + Review): For each issue, a sandbox is created via
 //                               createSandbox(). The implementer runs first
 //                               (100 iterations). If it produces commits, a
 //                               reviewer runs in the same sandbox on the same
 //                               branch (1 iteration). All issue pipelines run
 //                               concurrently via Promise.allSettled().
-//   Phase 3 (Merge):            A single agent merges all completed branches
-//                               into the current branch.
+//   Phase 3 (PR Creator):      A single agent pushes branches and creates
+//                               stacked PRs via gh pr create. Dependent
+//                               issues target the previous PR's branch,
+//                               forming a chain.
 //
 // The outer loop repeats up to MAX_ITERATIONS times so that newly unblocked
-// issues are picked up after each round of merges.
+// issues are picked up after each round of PR creation.
 //
 // Usage:
 //   npx tsx .sandcastle/main.mts
@@ -31,7 +34,12 @@ import { z } from "zod";
 // https://standardschema.dev.
 const planSchema = z.object({
   issues: z.array(
-    z.object({ id: z.string(), title: z.string(), branch: z.string() }),
+    z.object({
+      id: z.string(),
+      title: z.string(),
+      branch: z.string(),
+      blocked_by: z.array(z.string()),
+    }),
   ),
 });
 
@@ -39,7 +47,7 @@ const planSchema = z.object({
 // Configuration
 // ---------------------------------------------------------------------------
 
-// Maximum number of plan→execute→merge cycles before stopping.
+// Maximum number of plan→execute→PR cycles before stopping.
 // Raise this if your backlog is large; lower it for a quick smoke-test run.
 const MAX_ITERATIONS = 10;
 
@@ -53,6 +61,24 @@ const hooks = {
 // starts. Avoids a full npm install from scratch; the hook above handles
 // platform-specific binaries and any packages added since the last copy.
 const copyToWorktree = ["node_modules"];
+
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+
+type PlanIssue = z.infer<typeof planSchema>["issues"][number];
+
+/** Return the base branch for a stacked PR targeting `issue`. */
+function resolveBaseBranch(
+  issue: PlanIssue,
+  allIssues: PlanIssue[],
+): string {
+  const depBranch = issue.blocked_by
+    .map((depId) => allIssues.find((d) => d.id === depId)?.branch)
+    .find((b): b is string => b !== undefined);
+
+  return depBranch ?? "main";
+}
 
 // ---------------------------------------------------------------------------
 // Main loop
@@ -146,7 +172,7 @@ for (let iteration = 1; iteration <= MAX_ITERATIONS; iteration++) {
             },
           });
 
-          // Merge commits from both runs so the merge phase sees all of them.
+          // Combine commits from both runs so Phase 3 sees all of them.
           // Each sandbox.run() only returns commits from its own run.
           return {
             ...review,
@@ -170,8 +196,8 @@ for (let iteration = 1; iteration <= MAX_ITERATIONS; iteration++) {
     }
   }
 
-  // Only pass branches that actually produced commits to the merge phase.
-  // An agent that ran successfully but made no commits has nothing to merge.
+  // Only pass branches that actually produced commits to Phase 3.
+  // An agent that ran successfully but made no commits has nothing to PR.
   const completedIssues = settled
     .map((outcome, i) => ({ outcome, issue: issues[i]! }))
     .filter(
@@ -191,36 +217,45 @@ for (let iteration = 1; iteration <= MAX_ITERATIONS; iteration++) {
   }
 
   if (completedBranches.length === 0) {
-    // All agents ran but none made commits — nothing to merge this cycle.
-    console.log("No commits produced. Nothing to merge.");
+    // All agents ran but none made commits — nothing to create PRs for.
+    console.log("No commits produced. Nothing to create PRs for.");
     continue;
   }
 
   // -------------------------------------------------------------------------
-  // Phase 3: Merge
+  // Phase 3: Create stacked PRs
   //
-  // One agent merges all completed branches into the current branch,
-  // resolving any conflicts and running tests to confirm everything works.
+  // One agent pushes each completed branch and creates a PR. Dependent issues
+  // target the previous PR's branch, forming a chain. Before creating a stacked
+  // PR the agent merges the base branch into the dependent branch, resolving
+  // conflicts and running tests so every PR is ready to merge.
   //
-  // The {{BRANCHES}} and {{ISSUES}} prompt arguments are lists that the agent
-  // uses to know which branches to merge and which issues to close.
+  // {{DEPENDENCIES}} maps each branch to its base branch (the branch it should
+  // target). Leaf branches (no dependents) target the main branch.
   // -------------------------------------------------------------------------
   await sandcastle.run({
     hooks,
     sandbox: docker(),
-    name: "merger",
+    name: "pr-creator",
     maxIterations: 1,
     agent: sandcastle.opencode("opencode/big-pickle"),
-    promptFile: "./.sandcastle/merge-prompt.md",
+    promptFile: "./.sandcastle/pr-creator-prompt.md",
     promptArgs: {
       // A markdown list of branch names, one per line.
       BRANCHES: completedBranches.map((b) => `- ${b}`).join("\n"),
       // A markdown list of issue IDs and titles, one per line.
       ISSUES: completedIssues.map((i) => `- ${i.id}: ${i.title}`).join("\n"),
+      // Dependency edges: for each completed branch, list its base branch.
+      DEPENDENCIES: completedIssues
+        .map((i) => {
+          const baseBranch = resolveBaseBranch(i, completedIssues);
+          return `- ${i.branch} → base: ${baseBranch}`;
+        })
+        .join("\n"),
     },
   });
 
-  console.log("\nBranches merged.");
+  console.log("\nStacked PRs created.");
 }
 
 console.log("\nAll done.");

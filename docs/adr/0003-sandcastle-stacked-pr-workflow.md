@@ -1,3 +1,13 @@
-# Sandcastle Stacked PR Workflow
+# Sandcastle: Stacked PR Workflow
 
-Sandcastle now creates stacked pull requests instead of merging directly to master. Each issue gets its own PR; dependent issues target the previous PR's branch (not master), forming a chain. Before creating a stacked PR, the agent merges the base branch into the dependent branch, resolving conflicts and running tests so every PR is ready to merge. We chose this over direct merge (no human review), draft PRs (conflicts pushed to humans), and single-PR-per-iteration (coarse-grained reviews) because it keeps the AI agent's work visible and reviewable while preserving the dependency graph. The trade-off is added complexity in the PR creation agent (push branches, determine base, merge base, create PRs) and the need for a human to merge PRs before dependent work becomes truly unblocked.
+Replace Sandcastle's Phase 3 (direct merge to master) with a stacked pull request workflow. Each issue gets its own PR; dependent issues target the previous PR's branch, forming a chain. This gives humans a review gate before any code lands on main, and keeps the git history linear and easy to bisect.
+
+The planner now emits `blocked_by` dependency edges per issue so the orchestrator can compute the correct base branch for each stacked PR. Before creating a stacked PR the agent merges the base branch into the dependent branch, resolving conflicts and running tests so every PR is ready to merge. Issue closing is removed from the agent workflow — humans close issues when they merge PRs.
+
+## Consequences
+
+- Every change gets a review gate (PR approval) before landing on main
+- Dependent changes are stacked, so reviewers see incremental diffs
+- The planner must understand inter-issue dependencies, not just pick unblocked work
+- The git history becomes a chain of PRs rather than a flat merge commit
+- Issue close is a human action, not an agent action
