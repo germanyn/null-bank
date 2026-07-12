@@ -82,7 +82,7 @@ function resolveBaseBranch(issue: PlanIssue, allIssues: PlanIssue[]): string {
     .map((depId) => allIssues.find((d) => d.id === depId)?.branch)
     .find((b): b is string => b !== undefined);
 
-  return depBranch ?? "main";
+  return depBranch ?? "master";
 }
 
 // ---------------------------------------------------------------------------
@@ -236,7 +236,7 @@ for (let iteration = 1; iteration <= MAX_ITERATIONS; iteration++) {
   // conflicts and running tests so every PR is ready to merge.
   //
   // {{DEPENDENCIES}} maps each branch to its base branch (the branch it should
-  // target). Leaf branches (no dependents) target the main branch.
+  // target). Leaf branches (no dependents) target the master branch.
   // -------------------------------------------------------------------------
   await sandcastle.run({
     hooks,
