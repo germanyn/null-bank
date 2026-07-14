@@ -2,6 +2,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { Sidebar } from './components/Sidebar';
 import { TopBar } from './components/TopBar';
 import { Placeholder } from './components/Placeholder';
+import { routes } from './routes';
 
 export function App() {
   return (
@@ -11,9 +12,13 @@ export function App() {
         <TopBar />
         <main style={{ flex: 1, padding: '2rem' }}>
           <Routes>
-            <Route path="/accounts" element={<Placeholder title="Accounts" />} />
-            <Route path="/customers" element={<Placeholder title="Customers" />} />
-            <Route path="/transfers" element={<Placeholder title="Transfers" />} />
+            {routes.map((route) => (
+              <Route
+                key={route.path}
+                path={route.path}
+                element={<Placeholder title={route.title} />}
+              />
+            ))}
             <Route path="*" element={<Navigate to="/accounts" replace />} />
           </Routes>
         </main>

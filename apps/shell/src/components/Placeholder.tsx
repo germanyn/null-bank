@@ -1,4 +1,8 @@
-export function Placeholder({ title }: { title: string }) {
+interface Props {
+  title: string;
+}
+
+export function Placeholder({ title }: Props) {
   return (
     <div>
       <h2>{title}</h2>
