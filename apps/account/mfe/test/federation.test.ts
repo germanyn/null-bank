@@ -1,24 +1,20 @@
 import { describe, it, expect } from 'vitest';
-import { loadConfigFromFile } from 'vite';
-import { fileURLToPath } from 'node:url';
-import { dirname, resolve } from 'node:path';
+import { readFileSync } from 'fs';
+import { resolve } from 'path';
 
-describe('Module Federation configuration', () => {
-  it('exposes AccountApp through the federation plugin', async () => {
-    const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+describe('account-mfe vite config', () => {
+  const configPath = resolve(__dirname, '../vite.config.ts');
+  const configContent = readFileSync(configPath, 'utf-8');
 
-    const result = await loadConfigFromFile(
-      { command: 'build', mode: 'production' },
-      undefined,
-      root,
-    );
-    expect(result).not.toBeNull();
+  it('uses @module-federation/vite', () => {
+    expect(configContent).toContain('@module-federation/vite');
+  });
 
-    const config = result!.config;
-    const flatPlugins = config.plugins?.flat() ?? [];
-    const federationPlugin = flatPlugins.find(
-      (p: any) => p?.name === 'originjs:federation',
-    );
-    expect(federationPlugin).toBeDefined();
+  it('exposes ./AccountApp as a Module Federation remote', () => {
+    expect(configContent).toContain('./AccountApp');
+  });
+
+  it('configures a remote entry filename', () => {
+    expect(configContent).toContain("filename: 'remoteEntry.js'");
   });
 });

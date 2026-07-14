@@ -1,9 +1,21 @@
 export const federationConfig = {
-  name: 'shell',
+  name: "shell",
   remotes: {
-    'account-mfe': 'http://localhost:4300/assets/remoteEntry.js',
-    'customer-mfe': 'http://localhost:4400/assets/remoteEntry.js',
-    'transfer-mfe': 'http://localhost:4500/assets/remoteEntry.js',
+    "account-mfe": {
+      type: "module",
+      name: "account-mfe",
+      entry: `http://localhost:${process.env.ACCOUNT_MFE_PORT ?? 4300}/remoteEntry.js`,
+    },
+    "customer-mfe": {
+      type: "module",
+      name: "customer-mfe",
+      entry: `http://localhost:${process.env.CUSTOMER_MFE_PORT ?? 4400}/remoteEntry.js`,
+    },
+    "transfer-mfe": {
+      type: "module",
+      name: "transfer-mfe",
+      entry: `http://localhost:${process.env.TRANSFER_MFE_PORT ?? 4500}/remoteEntry.js`,
+    },
   },
-  shared: ['react', 'react-dom'],
+  shared: ["react", "react-dom"],
 };

@@ -6,6 +6,7 @@
     "test": "nx run-many --target=test",
     "typecheck": "nx run-many --target=typecheck",
     "lint": "nx run-many --target=lint",
+    "docker": "docker-compose up -d",
     "dev:shell": "nx dev @null-bank/shell",
     "dev:account-svc": "nx dev @null-bank/account-svc",
     "dev:account-mfe": "nx dev @null-bank/account-mfe",
@@ -16,7 +17,7 @@
     "dev:transfer-svc": "nx dev @null-bank/transfer-svc",
     "dev:transfer-mfe": "nx dev @null-bank/transfer-mfe",
     "dev:transfer": "nx run-many --projects=@null-bank/transfer-svc,@null-bank/transfer-mfe,@null-bank/shell --target=dev --parallel",
-    "dev:all": "nx run-many --projects=@null-bank/shell,@null-bank/account-svc,@null-bank/account-mfe,@null-bank/customer-svc,@null-bank/customer-mfe,@null-bank/transfer-svc,@null-bank/transfer-mfe --target=dev --parallel=10",
+    "dev:all": "pnpm docker && nx run-many --projects=@null-bank/shell,@null-bank/account-svc,@null-bank/account-mfe,@null-bank/customer-svc,@null-bank/customer-mfe,@null-bank/transfer-svc,@null-bank/transfer-mfe --target=dev --parallel=10",
     "opencode:web": "opencode web --hostname 0.0.0.0",
     "sc": "tsx .sandcastle/main.mts",
     "sc:build": "sandcastle docker build-image"

@@ -1,4 +1,4 @@
-const BASE_URL = `http://localhost:${process.env.ACCOUNT_SVC_PORT ?? 3100}`;
+const BASE_URL = `http://localhost:${import.meta.env.VITE_ACCOUNT_SVC_PORT ?? 3100}`;
 
 type ApiResult<T> =
   | {

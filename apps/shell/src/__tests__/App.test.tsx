@@ -1,9 +1,17 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { App } from '../App';
 import { ErrorBoundary } from '../components/ErrorBoundary';
+
+vi.mock('../mfe-loaders', () => ({
+  loaderMap: {
+    '/accounts': () => Promise.resolve({ default: () => <div><h2>Accounts</h2></div> }),
+    '/customers': () => Promise.resolve({ default: () => <div><h2>Customers</h2></div> }),
+    '/transfers': () => Promise.resolve({ default: () => <div><h2>Transfers</h2></div> }),
+  },
+}));
 
 function renderShell(route = '/') {
   return render(
@@ -34,9 +42,11 @@ describe('Shell smoke tests', () => {
     ['accounts', 'Accounts'],
     ['customers', 'Customers'],
     ['transfers', 'Transfers'],
-  ])('renders %s placeholder on /%s route', (_path, title) => {
+  ])('renders %s placeholder on /%s route', async (_path, title) => {
     renderShell(`/${_path}`);
-    expect(screen.getByRole('heading', { name: title })).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: title })).toBeInTheDocument();
+    });
   });
 
   it('navigates between routes via sidebar links', async () => {
@@ -44,13 +54,19 @@ describe('Shell smoke tests', () => {
     renderShell();
 
     await user.click(screen.getByRole('link', { name: /accounts/i }));
-    expect(screen.getByRole('heading', { name: 'Accounts' })).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: 'Accounts' })).toBeInTheDocument();
+    });
 
     await user.click(screen.getByRole('link', { name: /customers/i }));
-    expect(screen.getByRole('heading', { name: 'Customers' })).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: 'Customers' })).toBeInTheDocument();
+    });
 
     await user.click(screen.getByRole('link', { name: /transfers/i }));
-    expect(screen.getByRole('heading', { name: 'Transfers' })).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: 'Transfers' })).toBeInTheDocument();
+    });
   });
 
   it('error boundary catches thrown error and renders fallback UI', () => {
@@ -63,8 +79,10 @@ describe('Shell smoke tests', () => {
     expect(screen.getByRole('button', { name: /retry/i })).toBeInTheDocument();
   });
 
-  it('redirects unmatched route to accounts', () => {
+  it('redirects unmatched route to accounts', async () => {
     renderShell('/unknown');
-    expect(screen.getByRole('heading', { name: 'Accounts' })).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: 'Accounts' })).toBeInTheDocument();
+    });
   });
 });

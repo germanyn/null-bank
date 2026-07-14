@@ -1,5 +1,5 @@
-const ACCOUNT_BASE = `http://localhost:${process.env.ACCOUNT_SVC_PORT ?? 3100}`;
-const TRANSFER_BASE = `http://localhost:${process.env.TRANSFER_SVC_PORT ?? 3300}`;
+const ACCOUNT_BASE = `http://localhost:${import.meta.env.VITE_ACCOUNT_SVC_PORT ?? 3100}`;
+const TRANSFER_BASE = `http://localhost:${import.meta.env.VITE_TRANSFER_SVC_PORT ?? 3300}`;
 
 type ApiResult<T> =
   | { ok: true; data: T }
