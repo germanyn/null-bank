@@ -5,9 +5,8 @@ export default defineConfig({
   plugins: [react()],
   test: {
     globals: true,
-    environment: 'jsdom',
-    setupFiles: ['./src/test-setup.ts'],
-    css: true,
-    exclude: ['test/federation.test.ts', 'node_modules/**', 'dist/**'],
+    environment: 'node',
+    include: ['test/federation.test.ts'],
+    exclude: ['node_modules/**', 'dist/**'],
   },
 });
