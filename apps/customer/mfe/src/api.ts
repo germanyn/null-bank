@@ -1,4 +1,4 @@
-const BASE_URL = 'http://localhost:3001';
+const BASE_URL = `http://localhost:${process.env.CUSTOMER_SVC_PORT ?? 3200}`;
 
 type ApiResult<T> = {
   ok: true;

@@ -6,12 +6,22 @@ Port 3000 is explicitly avoided — it conflicts with many common development to
 
 ## Range Convention
 
-Each domain gets a 100-port range. SVC ports start at 3100, MFE ports start at 4300.
+Each domain gets two 100-port ranges: one for its backend service (SVC) and one for its frontend micro-frontend (MFE).
 
-| Domain     | SVC Range   | MFE Range   | Env Vars                          |
-|------------|-------------|-------------|-----------------------------------|
-| account    | 3100–3199   | 4300–4399   | `ACCOUNT_SVC_PORT`, `ACCOUNT_MFE_PORT` |
-| transactions | 3200–3299 | 4400–4499   | `TRANSACTIONS_SVC_PORT`, `TRANSACTIONS_MFE_PORT` |
+- **Backend (SVC)** ports start at **3100**.
+- **Frontend (MFE)** ports start at **4300**.
+
+| Domain     | SVC (Backend) Range | MFE (Frontend) Range | Env Vars                                  |
+|------------|---------------------|----------------------|-------------------------------------------|
+| account    | 3100–3199           | 4300–4399            | `ACCOUNT_SVC_PORT`, `ACCOUNT_MFE_PORT`    |
+| customer   | 3200–3299           | 4400–4499            | `CUSTOMER_SVC_PORT`, `CUSTOMER_MFE_PORT`  |
+| transfer   | 3300–3399           | 4500–4599            | `TRANSFER_SVC_PORT`, `TRANSFER_MFE_PORT`  |
+
+The **shell** (app shell / host) is not a domain service and uses a standalone port:
+
+| Service | Port | Env Var     |
+|---------|------|-------------|
+| shell   | 5000 | `SHELL_PORT`|
 
 ## Per-Domain Breakdown
 
@@ -20,10 +30,19 @@ Each domain gets a 100-port range. SVC ports start at 3100, MFE ports start at 4
 - **SVC**: `ACCOUNT_SVC_PORT` — default `3100`
 - **MFE**: `ACCOUNT_MFE_PORT` — default `4300`
 
-### transactions (future)
+### customer
 
-- **SVC**: `TRANSACTIONS_SVC_PORT` — default `3200`
-- **MFE**: `TRANSACTIONS_MFE_PORT` — default `4400`
+- **SVC**: `CUSTOMER_SVC_PORT` — default `3200`
+- **MFE**: `CUSTOMER_MFE_PORT` — default `4400`
+
+### transfer
+
+- **SVC**: `TRANSFER_SVC_PORT` — default `3300`
+- **MFE**: `TRANSFER_MFE_PORT` — default `4500`
+
+### shell
+
+- **Port**: `SHELL_PORT` — default `5000`
 
 ## Adding a New Domain
 

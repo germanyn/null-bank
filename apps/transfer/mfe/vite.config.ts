@@ -15,7 +15,7 @@ export default defineConfig({
     }),
   ],
   server: {
-    port: 4201,
+    port: Number(process.env.TRANSFER_MFE_PORT ?? 4500),
   },
   build: {
     modulePreload: false,

@@ -15,12 +15,13 @@ const eventBus = await connectEventBus(process.env.RABBITMQ_URL || 'amqp://guest
 
 registerTransferEventHandlers(db, eventBus);
 
+const port = Number(process.env.TRANSFER_SVC_PORT ?? 3300);
 const app = buildApp(db, eventBus);
 
 const start = async () => {
   try {
-    await app.listen({ port: 3001, host: '0.0.0.0' });
-    console.log('Transfer service running on http://localhost:3001');
+    await app.listen({ port, host: '0.0.0.0' });
+    console.log(`Transfer service running on http://localhost:${port}`);
   } catch (err) {
     app.log.error(err);
     process.exit(1);
