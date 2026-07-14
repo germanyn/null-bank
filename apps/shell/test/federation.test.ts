@@ -15,21 +15,27 @@ describe('Module Federation host configuration', () => {
   });
 
   it('points account-mfe to localhost:4300', () => {
-    expect(federationConfig.remotes['account-mfe']).toBe(
-      'http://localhost:4300/assets/remoteEntry.js',
-    );
+    expect(federationConfig.remotes['account-mfe']).toEqual({
+      type: 'module',
+      name: 'account-mfe',
+      entry: 'http://localhost:4300/remoteEntry.js',
+    });
   });
 
   it('points customer-mfe to localhost:4400', () => {
-    expect(federationConfig.remotes['customer-mfe']).toBe(
-      'http://localhost:4400/assets/remoteEntry.js',
-    );
+    expect(federationConfig.remotes['customer-mfe']).toEqual({
+      type: 'module',
+      name: 'customer-mfe',
+      entry: 'http://localhost:4400/remoteEntry.js',
+    });
   });
 
   it('points transfer-mfe to localhost:4500', () => {
-    expect(federationConfig.remotes['transfer-mfe']).toBe(
-      'http://localhost:4500/assets/remoteEntry.js',
-    );
+    expect(federationConfig.remotes['transfer-mfe']).toEqual({
+      type: 'module',
+      name: 'transfer-mfe',
+      entry: 'http://localhost:4500/remoteEntry.js',
+    });
   });
 
   it('shares react and react-dom', () => {
