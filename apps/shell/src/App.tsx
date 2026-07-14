@@ -4,7 +4,7 @@ function Placeholder({ domain }: { domain: string }) {
   return <div>{domain} — coming soon</div>;
 }
 
-export default function App() {
+export function App() {
   return (
     <div style={{ display: 'flex', minHeight: '100vh' }}>
       <nav style={{ width: 200, background: '#f5f5f5', padding: 16 }}>
