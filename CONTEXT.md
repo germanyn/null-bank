@@ -8,29 +8,20 @@ A web bank application enabling internal money transfers.
 A movement of funds between two accounts within the same bank. Passes through **Pending**, then either **Completed** or **Failed**.
 _Avoid_: Wire transfer, external payment, remittance, PIX, ACH
 
-**Reservation**:
-An earmark of funds in the source account during a two-phase settlement. Reserved funds are unavailable for other transfers until settled or released.
-
 **Account**:
-A container of funds owned by exactly one customer, identified by a unique account number. Each customer (by CPF/CNPJ) may hold at most one account.
-_Avoid_: Wallet, balance sheet Each Customer may hold at most one Account.
-_Avoid_: Wallet, balance, pocket
+A container of funds owned by exactly one customer, identified by a unique account number. Each Customer may hold at most one Account.
+_Avoid_: Wallet, pocket
 
-**Account Holder**:
-The customer who owns an account. Can be either a natural person (CPF) or a legal entity (CNPJ).
+**Balance**:
+The total amount of funds in an Account at a given point in time. Updated when a Transfer completes.
+_Avoid_: Available balance, funds
 
 **Customer**:
 A person or organization that holds accounts at the bank.
 _Avoid_: User, client
 
-**CPF**:
-Brazilian individual taxpayer ID — identifies natural persons.
+**Tax ID**:
+A government-issued identifier for a Customer. Determines whether the Customer is a natural person or a legal entity. Format varies by country (e.g., CPF and CNPJ in Brazil).
+_Avoid_: CPF, CNPJ, taxpayer ID
 
-**CNPJ**:
-Brazilian corporate taxpayer ID — identifies legal entities.
 
-**Shell**:
-The host application that composes all microfrontends into a single navigable UI. Owns all routing, provides the shared layout (sidebar navigation + top bar), and lazy-loads each microfrontend at runtime via Module Federation. A thin orchestration layer — any domain logic belongs in the MFEs.
-
-**Microfrontend (MFE)**:
-A self-contained frontend module that encapsulates a single domain's UI (e.g., accounts, customers, transfers). Each MFE is loaded at runtime by the shell via Module Federation and exposes a single React component representing its full internal UI. MFEs continue to work as standalone SPAs during development.
