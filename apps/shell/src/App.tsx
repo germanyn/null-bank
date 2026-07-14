@@ -1,4 +1,5 @@
 import { Routes, Route, NavLink } from 'react-router-dom';
+import { ErrorBoundary } from './components/ErrorBoundary';
 
 function Placeholder({ domain }: { domain: string }) {
   return <div>{domain} — coming soon</div>;
@@ -23,9 +24,30 @@ export function App() {
       </nav>
       <main style={{ flex: 1, padding: 16 }}>
         <Routes>
-          <Route path="/accounts/*" element={<Placeholder domain="Accounts" />} />
-          <Route path="/customers/*" element={<Placeholder domain="Customers" />} />
-          <Route path="/transfers/*" element={<Placeholder domain="Transfers" />} />
+          <Route
+            path="/accounts/*"
+            element={
+              <ErrorBoundary domain="Accounts">
+                <Placeholder domain="Accounts" />
+              </ErrorBoundary>
+            }
+          />
+          <Route
+            path="/customers/*"
+            element={
+              <ErrorBoundary domain="Customers">
+                <Placeholder domain="Customers" />
+              </ErrorBoundary>
+            }
+          />
+          <Route
+            path="/transfers/*"
+            element={
+              <ErrorBoundary domain="Transfers">
+                <Placeholder domain="Transfers" />
+              </ErrorBoundary>
+            }
+          />
           <Route path="*" element={<div>Select a domain from the sidebar</div>} />
         </Routes>
       </main>
