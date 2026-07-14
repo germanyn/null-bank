@@ -15,6 +15,6 @@ describe('transfer-mfe vite config', () => {
   });
 
   it('configures a remote entry filename', () => {
-    expect(configContent).toMatch(/filename:\s*['"]remoteEntry\.js['"]/);
+    expect(configContent).toContain("filename: 'remoteEntry.js'");
   });
 });
