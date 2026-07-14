@@ -6,7 +6,7 @@ export default defineConfig({
   plugins: [
     react(),
     federation({
-      name: '@null-bank/customer-mfe',
+      name: 'customerMfe',
       filename: 'remoteEntry.js',
       exposes: {
         './CustomerApp': './src/App',
@@ -15,9 +15,10 @@ export default defineConfig({
     }),
   ],
   server: {
-    port: Number(process.env.CUSTOMER_MFE_PORT ?? 4400),
+    port: 4201,
   },
   build: {
+    modulePreload: false,
     target: 'esnext',
   },
 });

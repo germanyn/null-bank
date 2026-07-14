@@ -1,33 +1,28 @@
-import { Routes, Route, NavLink } from 'react-router-dom';
-import { MfeRoute } from './components/MfeRoute';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import { Sidebar } from './components/Sidebar';
+import { TopBar } from './components/TopBar';
+import { Placeholder } from './components/Placeholder';
 import { routes } from './routes';
-import { loaderMap } from './mfe-loaders';
 
 export function App() {
   return (
     <div style={{ display: 'flex', minHeight: '100vh' }}>
-      <nav style={{ width: 200, background: '#f5f5f5', padding: 16 }}>
-        <h2>Null Bank</h2>
-        <ul style={{ listStyle: 'none', padding: 0 }}>
-          {routes.map((route) => (
-            <li key={route.path}>
-              <NavLink to={route.path}>{route.title}</NavLink>
-            </li>
-          ))}
-        </ul>
-      </nav>
-      <main style={{ flex: 1, padding: 16 }}>
-        <Routes>
-          {routes.map((route) => (
-            <Route
-              key={route.path}
-              path={`${route.path}/*`}
-              element={<MfeRoute loader={loaderMap[route.path]} />}
-            />
-          ))}
-          <Route path="*" element={<div>Select a domain from the sidebar</div>} />
-        </Routes>
-      </main>
+      <Sidebar />
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+        <TopBar />
+        <main style={{ flex: 1, padding: '2rem' }}>
+          <Routes>
+            {routes.map((route) => (
+              <Route
+                key={route.path}
+                path={route.path}
+                element={<Placeholder title={route.title} />}
+              />
+            ))}
+            <Route path="*" element={<Navigate to="/accounts" replace />} />
+          </Routes>
+        </main>
+      </div>
     </div>
   );
 }

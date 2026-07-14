@@ -11,13 +11,9 @@ export default defineConfig({
       exposes: {
         './AccountApp': './src/App',
       },
-      shared: ['react', 'react-dom'],
     }),
   ],
   server: {
     port: Number(process.env.ACCOUNT_MFE_PORT ?? 4300),
-  },
-  build: {
-    target: 'esnext',
   },
 });
