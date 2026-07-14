@@ -1,4 +1,3 @@
-import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
@@ -14,7 +13,7 @@ function renderShell(route = '/') {
   );
 }
 
-function ThrowingComponent(): React.ReactNode {
+function ThrowingComponent(): JSX.Element {
   throw new Error('MFE load failed');
 }
 
@@ -32,19 +31,13 @@ describe('Shell smoke tests', () => {
     expect(screen.getByRole('link', { name: /transfers/i })).toBeInTheDocument();
   });
 
-  it('renders accounts placeholder on /accounts route', () => {
-    renderShell('/accounts');
-    expect(screen.getByText('Accounts — coming soon')).toBeInTheDocument();
-  });
-
-  it('renders customers placeholder on /customers route', () => {
-    renderShell('/customers');
-    expect(screen.getByText('Customers — coming soon')).toBeInTheDocument();
-  });
-
-  it('renders transfers placeholder on /transfers route', () => {
-    renderShell('/transfers');
-    expect(screen.getByText('Transfers — coming soon')).toBeInTheDocument();
+  it.each([
+    ['accounts', 'Accounts'],
+    ['customers', 'Customers'],
+    ['transfers', 'Transfers'],
+  ])('renders %s placeholder on /%s route', (_path, domain) => {
+    renderShell(`/${_path}`);
+    expect(screen.getByText(`${domain} — coming soon`)).toBeInTheDocument();
   });
 
   it('navigates between routes via sidebar links', async () => {

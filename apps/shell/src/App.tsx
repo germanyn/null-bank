@@ -5,6 +5,14 @@ function Placeholder({ domain }: { domain: string }) {
   return <div>{domain} — coming soon</div>;
 }
 
+function DomainContent({ domain }: { domain: string }) {
+  return (
+    <ErrorBoundary domain={domain}>
+      <Placeholder domain={domain} />
+    </ErrorBoundary>
+  );
+}
+
 export function App() {
   return (
     <div style={{ display: 'flex', minHeight: '100vh' }}>
@@ -24,30 +32,9 @@ export function App() {
       </nav>
       <main style={{ flex: 1, padding: 16 }}>
         <Routes>
-          <Route
-            path="/accounts/*"
-            element={
-              <ErrorBoundary domain="Accounts">
-                <Placeholder domain="Accounts" />
-              </ErrorBoundary>
-            }
-          />
-          <Route
-            path="/customers/*"
-            element={
-              <ErrorBoundary domain="Customers">
-                <Placeholder domain="Customers" />
-              </ErrorBoundary>
-            }
-          />
-          <Route
-            path="/transfers/*"
-            element={
-              <ErrorBoundary domain="Transfers">
-                <Placeholder domain="Transfers" />
-              </ErrorBoundary>
-            }
-          />
+          <Route path="/accounts/*" element={<DomainContent domain="Accounts" />} />
+          <Route path="/customers/*" element={<DomainContent domain="Customers" />} />
+          <Route path="/transfers/*" element={<DomainContent domain="Transfers" />} />
           <Route path="*" element={<div>Select a domain from the sidebar</div>} />
         </Routes>
       </main>
