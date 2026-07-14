@@ -1,8 +1,8 @@
 import { Component, type ReactNode } from 'react';
 
 interface Props {
-  domain: string;
   children: ReactNode;
+  onRetry?: () => void;
 }
 
 interface State {
@@ -10,23 +10,27 @@ interface State {
 }
 
 export class ErrorBoundary extends Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-    this.state = { hasError: false };
-  }
+  state: State = { hasError: false };
 
   static getDerivedStateFromError(): State {
     return { hasError: true };
   }
 
+  componentDidCatch(error: Error) {
+    console.error('[ErrorBoundary]', error);
+  }
+
+  handleRetry = () => {
+    this.setState({ hasError: false });
+    this.props.onRetry?.();
+  };
+
   render() {
     if (this.state.hasError) {
       return (
-        <div role="alert">
-          <p>{this.props.domain} service unavailable. Retry?</p>
-          <button onClick={() => this.setState({ hasError: false })}>
-            Retry
-          </button>
+        <div style={{ padding: '2rem', textAlign: 'center' }}>
+          <p>Service unavailable. Retry?</p>
+          <button onClick={this.handleRetry}>Retry</button>
         </div>
       );
     }

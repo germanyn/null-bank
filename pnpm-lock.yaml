@@ -43,6 +43,9 @@ importers:
         specifier: 18.3.1
         version: 18.3.1(react@18.3.1)
     devDependencies:
+      '@originjs/vite-plugin-federation':
+        specifier: ^1.4.1
+        version: 1.4.1
       '@testing-library/jest-dom':
         specifier: 6.6.3
         version: 6.6.3
@@ -126,6 +129,9 @@ importers:
         specifier: 18.3.1
         version: 18.3.1(react@18.3.1)
     devDependencies:
+      '@originjs/vite-plugin-federation':
+        specifier: ^1.4.1
+        version: 1.4.1
       '@testing-library/jest-dom':
         specifier: 6.6.3
         version: 6.6.3
@@ -194,9 +200,12 @@ importers:
         specifier: 18.3.1
         version: 18.3.1(react@18.3.1)
       react-router-dom:
-        specifier: ^6.28.0
-        version: 6.30.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: 6.28.0
+        version: 6.28.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
     devDependencies:
+      '@originjs/vite-plugin-federation':
+        specifier: ^1.4.1
+        version: 1.4.1
       '@testing-library/jest-dom':
         specifier: 6.6.3
         version: 6.6.3
@@ -237,6 +246,9 @@ importers:
         specifier: 18.3.1
         version: 18.3.1(react@18.3.1)
     devDependencies:
+      '@originjs/vite-plugin-federation':
+        specifier: ^1.4.1
+        version: 1.4.1
       '@testing-library/jest-dom':
         specifier: 6.6.3
         version: 6.6.3
@@ -1502,6 +1514,10 @@ packages:
   '@nx/workspace@20.3.0':
     resolution: {integrity: sha512-z8NSAo5SiLEMPuwasDvLdCCtaTGdINh1cSZMCom8HeLbT8F7risbR0IlHVqVrKj9FPKqrAIsH+4knVb4dHHCnQ==}
 
+  '@originjs/vite-plugin-federation@1.4.1':
+    resolution: {integrity: sha512-Uo08jW5pj1t58OUKuZNkmzcfTN2pqeVuAWCCiKf/75/oll4Efq4cHOqSE1FXMlvwZNGDziNdDyBbQ5IANem3CQ==}
+    engines: {node: '>=14.0.0', pnpm: '>=7.0.1'}
+
   '@phenomnomnominal/tsquery@5.0.1':
     resolution: {integrity: sha512-3nVv+e2FQwsW8Aw6qTU6f+1rfcJ3hrcnvH/mu9i8YhxO+9sqbOfpL8m6PbET5+xKOlz/VSbp0RoYWYCtIsnmuA==}
     peerDependencies:
@@ -1510,8 +1526,8 @@ packages:
   '@pinojs/redact@0.4.0':
     resolution: {integrity: sha512-k2ENnmBugE/rzQfEcdWHcCY+/FM3VLzH9cYEsbdsoqrvzAKRhUZeRNhAZvB8OitQJ1TBed3yqWtdjzS6wJKBwg==}
 
-  '@remix-run/router@1.23.3':
-    resolution: {integrity: sha512-4An71tdz9X8+3sI4Qqqd2LWd9vS39J7sqd9EU4Scw7TJE/qB10Flv/UuqbPVgfQV9XoK8Np6jNquZitnZq5i+Q==}
+  '@remix-run/router@1.21.0':
+    resolution: {integrity: sha512-xfSkCAchbdG5PnbrKqFWwia4Bi61nH+wm8wLEqfHDyp7Y3dZzgqS2itV8i4gAq9pC2HsTpwyBC6Ds8VHZ96JlA==}
     engines: {node: '>=14.0.0'}
 
   '@rollup/rollup-android-arm-eabi@4.62.2':
@@ -2530,6 +2546,10 @@ packages:
     resolution: {integrity: sha512-h5bgJWpxJNswbU7qCrV0tIKQCaS3blPDrqKWx+QxzuzL1zGUzij9XCWLrSLsJPu5t+eWA/ycetzYAO5IOMcWAQ==}
     hasBin: true
 
+  magic-string@0.27.0:
+    resolution: {integrity: sha512-8UnnX2PeRAPZuN12svgR9j7M1uWMovg/CEnIwIG0LFkXSJJe4PdfUGiTGl8V9bsBHFUtfVINcSyYxd7q+kx9fA==}
+    engines: {node: '>=12'}
+
   magic-string@0.30.21:
     resolution: {integrity: sha512-vd2F4YUyEXKGcLHoq+TEyCjxueSeHnFxyyjNp80yg0XV4vUhnDer/lvvlqM/arB5bXQN5K2/3oinyCRyx8T2CQ==}
 
@@ -2758,15 +2778,15 @@ packages:
     resolution: {integrity: sha512-jCvmsr+1IUSMUyzOkRcvnVbX3ZYC6g9TDrDbFuFmRDq7PD4yaGbLKNQL6k2jnArV8hjYxh7hVhAZB6s9HDGpZA==}
     engines: {node: '>=0.10.0'}
 
-  react-router-dom@6.30.4:
-    resolution: {integrity: sha512-q4HvNl+mmDdkS0g+MqiBZNteQJCuimWoOyHMy4T/RQLAn9Z29+E91QXRaxOujeMl2HTzRSS0KFPd7lxX3PjV0Q==}
+  react-router-dom@6.28.0:
+    resolution: {integrity: sha512-kQ7Unsl5YdyOltsPGl31zOjLrDv+m2VcIEcIHqYYD3Lp0UppLjrzcfJqDJwXxFw3TH/yvapbnUvPlAj7Kx5nbg==}
     engines: {node: '>=14.0.0'}
     peerDependencies:
       react: '>=16.8'
       react-dom: '>=16.8'
 
-  react-router@6.30.4:
-    resolution: {integrity: sha512-SVUsDe+DybHM/WmYKIVYhZh1o5Dcuf16yM6WjG02Q9XVFMZIJyHYhwrr6bFBXZkVP6z69kNkMyBCujt8FaFLJA==}
+  react-router@6.28.0:
+    resolution: {integrity: sha512-HrYdIFqdrnhDw0PqG/AKjAqEqM7AvxCz0DQ4h2W8k6nqmc5uRBYDag0SBxx9iYz5G8gnuNVLzUe13wl9eAsXXg==}
     engines: {node: '>=14.0.0'}
     peerDependencies:
       react: '>=16.8'
@@ -4473,6 +4493,11 @@ snapshots:
       - debug
       - supports-color
 
+  '@originjs/vite-plugin-federation@1.4.1':
+    dependencies:
+      estree-walker: 3.0.3
+      magic-string: 0.27.0
+
   '@phenomnomnominal/tsquery@5.0.1(typescript@5.6.3)':
     dependencies:
       esquery: 1.7.0
@@ -4480,7 +4505,7 @@ snapshots:
 
   '@pinojs/redact@0.4.0': {}
 
-  '@remix-run/router@1.23.3': {}
+  '@remix-run/router@1.21.0': {}
 
   '@rollup/rollup-android-arm-eabi@4.62.2':
     optional: true
@@ -5512,6 +5537,10 @@ snapshots:
 
   lz-string@1.5.0: {}
 
+  magic-string@0.27.0:
+    dependencies:
+      '@jridgewell/sourcemap-codec': 1.5.5
+
   magic-string@0.30.21:
     dependencies:
       '@jridgewell/sourcemap-codec': 1.5.5
@@ -5780,16 +5809,16 @@ snapshots:
 
   react-refresh@0.14.2: {}
 
-  react-router-dom@6.30.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+  react-router-dom@6.28.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
-      '@remix-run/router': 1.23.3
+      '@remix-run/router': 1.21.0
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
-      react-router: 6.30.4(react@18.3.1)
+      react-router: 6.28.0(react@18.3.1)
 
-  react-router@6.30.4(react@18.3.1):
+  react-router@6.28.0(react@18.3.1):
     dependencies:
-      '@remix-run/router': 1.23.3
+      '@remix-run/router': 1.21.0
       react: 18.3.1
 
   react@18.3.1:

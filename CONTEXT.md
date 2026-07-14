@@ -28,3 +28,9 @@ Brazilian individual taxpayer ID — identifies natural persons.
 
 **CNPJ**:
 Brazilian corporate taxpayer ID — identifies legal entities.
+
+**Shell**:
+The host application that composes all microfrontends into a single navigable UI. Owns all routing, provides the shared layout (sidebar navigation + top bar), and lazy-loads each microfrontend at runtime via Module Federation. A thin orchestration layer — any domain logic belongs in the MFEs.
+
+**Microfrontend (MFE)**:
+A self-contained frontend module that encapsulates a single domain's UI (e.g., accounts, customers, transfers). Each MFE is loaded at runtime by the shell via Module Federation and exposes a single React component representing its full internal UI. MFEs continue to work as standalone SPAs during development.
