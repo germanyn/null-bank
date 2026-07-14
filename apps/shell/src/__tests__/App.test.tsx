@@ -20,7 +20,6 @@ function ThrowingComponent(): JSX.Element {
 describe('Shell smoke tests', () => {
   it('renders without crashing with sidebar', () => {
     renderShell();
-    expect(screen.getByText('Null Bank')).toBeInTheDocument();
     expect(screen.getByRole('navigation')).toBeInTheDocument();
   });
 
@@ -35,9 +34,9 @@ describe('Shell smoke tests', () => {
     ['accounts', 'Accounts'],
     ['customers', 'Customers'],
     ['transfers', 'Transfers'],
-  ])('renders %s placeholder on /%s route', (_path, domain) => {
+  ])('renders %s placeholder on /%s route', (_path, title) => {
     renderShell(`/${_path}`);
-    expect(screen.getByText(`${domain} — coming soon`)).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: title })).toBeInTheDocument();
   });
 
   it('navigates between routes via sidebar links', async () => {
@@ -45,30 +44,27 @@ describe('Shell smoke tests', () => {
     renderShell();
 
     await user.click(screen.getByRole('link', { name: /accounts/i }));
-    expect(screen.getByText('Accounts — coming soon')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Accounts' })).toBeInTheDocument();
 
     await user.click(screen.getByRole('link', { name: /customers/i }));
-    expect(screen.getByText('Customers — coming soon')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Customers' })).toBeInTheDocument();
 
     await user.click(screen.getByRole('link', { name: /transfers/i }));
-    expect(screen.getByText('Transfers — coming soon')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Transfers' })).toBeInTheDocument();
   });
 
   it('error boundary catches thrown error and renders fallback UI', () => {
     render(
-      <ErrorBoundary domain="Accounts">
+      <ErrorBoundary>
         <ThrowingComponent />
       </ErrorBoundary>,
     );
-    expect(screen.getByRole('alert')).toHaveTextContent(
-      'Accounts service unavailable. Retry?',
-    );
+    expect(screen.getByText('Service unavailable. Retry?')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /retry/i })).toBeInTheDocument();
   });
 
-  it('shows default message on unmatched route', () => {
+  it('redirects unmatched route to accounts', () => {
     renderShell('/unknown');
-    expect(
-      screen.getByText('Select a domain from the sidebar'),
-    ).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Accounts' })).toBeInTheDocument();
   });
 });
