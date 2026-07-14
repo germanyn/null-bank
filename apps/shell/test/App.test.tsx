@@ -1,46 +1,71 @@
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
-import { describe, it, expect } from 'vitest';
 import { App } from '../src/App';
 
-function renderShell(route = '/') {
+function renderShell(initialRoute = '/') {
   return render(
-    <MemoryRouter initialEntries={[route]}>
+    <MemoryRouter initialEntries={[initialRoute]}>
       <App />
     </MemoryRouter>,
   );
 }
 
 describe('Shell', () => {
-  it('renders without crashing', () => {
-    renderShell();
-    expect(screen.getByText('Null Bank')).toBeInTheDocument();
+  beforeEach(() => {
+    vi.restoreAllMocks();
   });
 
-  it('shows sidebar navigation links', () => {
+  it('renders the top bar with "Null Bank" title', () => {
     renderShell();
-    expect(screen.getByText('Accounts')).toBeInTheDocument();
-    expect(screen.getByText('Customers')).toBeInTheDocument();
-    expect(screen.getByText('Transfers')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Null Bank' })).toBeInTheDocument();
   });
 
-  it('renders placeholder for accounts route', () => {
+  it('renders sidebar navigation links', () => {
+    renderShell();
+    expect(screen.getByRole('link', { name: /accounts/i })).toHaveAttribute('href', '/accounts');
+    expect(screen.getByRole('link', { name: /customers/i })).toHaveAttribute('href', '/customers');
+    expect(screen.getByRole('link', { name: /transfers/i })).toHaveAttribute('href', '/transfers');
+  });
+
+  it('renders placeholder content for the accounts route', () => {
     renderShell('/accounts');
-    expect(screen.getByText('Accounts — coming soon')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 2, name: 'Accounts' })).toBeInTheDocument();
+    expect(screen.getByText('Accounts content will be loaded here.')).toBeInTheDocument();
   });
 
-  it('renders placeholder for customers route', () => {
+  it('renders placeholder content for the customers route', () => {
     renderShell('/customers');
-    expect(screen.getByText('Customers — coming soon')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 2, name: 'Customers' })).toBeInTheDocument();
+    expect(screen.getByText('Customers content will be loaded here.')).toBeInTheDocument();
   });
 
-  it('renders placeholder for transfers route', () => {
+  it('renders placeholder content for the transfers route', () => {
     renderShell('/transfers');
-    expect(screen.getByText('Transfers — coming soon')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 2, name: 'Transfers' })).toBeInTheDocument();
+    expect(screen.getByText('Transfers content will be loaded here.')).toBeInTheDocument();
   });
 
-  it('shows default message on unmatched route', () => {
-    renderShell('/unknown');
-    expect(screen.getByText('Select a domain from the sidebar')).toBeInTheDocument();
+  it('navigates between routes when sidebar links are clicked', async () => {
+    const user = userEvent.setup();
+    renderShell('/accounts');
+
+    expect(screen.getByRole('heading', { level: 2, name: 'Accounts' })).toBeInTheDocument();
+
+    await user.click(screen.getByRole('link', { name: /customers/i }));
+    expect(screen.getByRole('heading', { level: 2, name: 'Customers' })).toBeInTheDocument();
+
+    await user.click(screen.getByRole('link', { name: /transfers/i }));
+    expect(screen.getByRole('heading', { level: 2, name: 'Transfers' })).toBeInTheDocument();
+
+    await user.click(screen.getByRole('link', { name: /accounts/i }));
+    expect(screen.getByRole('heading', { level: 2, name: 'Accounts' })).toBeInTheDocument();
+  });
+
+  it('highlights the active navigation link', () => {
+    renderShell('/accounts');
+    const accountsLink = screen.getByRole('link', { name: /accounts/i });
+    expect(accountsLink).toHaveAttribute('aria-current', 'page');
   });
 });
