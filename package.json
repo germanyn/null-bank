@@ -9,6 +9,7 @@
     "dev:account-svc": "nx dev @null-bank/account-svc",
     "dev:account-mfe": "nx dev @null-bank/account-mfe",
     "dev:account": "nx run-many --projects=@null-bank/account-svc,@null-bank/account-mfe --target=dev --parallel",
+    "opencode:web": "opencode web --hostname 0.0.0.0",
     "sc": "tsx .sandcastle/main.mts",
     "sc:build": "sandcastle docker build-image"
   },

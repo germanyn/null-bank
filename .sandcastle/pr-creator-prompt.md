@@ -44,6 +44,11 @@ For each branch, in dependency order (branches with no dependencies first):
    - A brief summary of what was implemented
    - A note that this PR is stacked on top of `<base-branch>`
 
+4. **Apply `pending-review` label** to the issue so sandcastle skips it in future runs:
+   ```
+   gh issue edit <issue-number> --add-label "pending-review"
+   ```
+
 # FINAL RULES
 
 - Do NOT close issues — humans close issues when they merge PRs

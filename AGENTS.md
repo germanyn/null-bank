@@ -6,7 +6,7 @@ Issues tracked on GitHub Issues. See `docs/agents/issue-tracker.md`.
 
 ### Triage labels
 
-Default five-role label vocabulary (needs-triage, needs-info, ready-for-agent, ready-for-human, wontfix). See `docs/agents/triage-labels.md`.
+Default six-role label vocabulary (needs-triage, needs-info, ready-for-agent, ready-for-human, wontfix, pending-review). See `docs/agents/triage-labels.md`.
 
 ### Domain docs
 
