@@ -1,8 +1,7 @@
 import { Routes, Route, NavLink } from 'react-router-dom';
-
-function Placeholder({ domain }: { domain: string }) {
-  return <div>{domain} — coming soon</div>;
-}
+import { MfeRoute } from './components/MfeRoute';
+import { routes } from './routes';
+import { loaderMap } from './mfe-loaders';
 
 export function App() {
   return (
@@ -10,22 +9,22 @@ export function App() {
       <nav style={{ width: 200, background: '#f5f5f5', padding: 16 }}>
         <h2>Null Bank</h2>
         <ul style={{ listStyle: 'none', padding: 0 }}>
-          <li>
-            <NavLink to="/accounts">Accounts</NavLink>
-          </li>
-          <li>
-            <NavLink to="/customers">Customers</NavLink>
-          </li>
-          <li>
-            <NavLink to="/transfers">Transfers</NavLink>
-          </li>
+          {routes.map((route) => (
+            <li key={route.path}>
+              <NavLink to={route.path}>{route.title}</NavLink>
+            </li>
+          ))}
         </ul>
       </nav>
       <main style={{ flex: 1, padding: 16 }}>
         <Routes>
-          <Route path="/accounts/*" element={<Placeholder domain="Accounts" />} />
-          <Route path="/customers/*" element={<Placeholder domain="Customers" />} />
-          <Route path="/transfers/*" element={<Placeholder domain="Transfers" />} />
+          {routes.map((route) => (
+            <Route
+              key={route.path}
+              path={`${route.path}/*`}
+              element={<MfeRoute loader={loaderMap[route.path]} />}
+            />
+          ))}
           <Route path="*" element={<div>Select a domain from the sidebar</div>} />
         </Routes>
       </main>

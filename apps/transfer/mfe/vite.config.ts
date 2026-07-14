@@ -1,9 +1,23 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import federation from '@originjs/vite-plugin-federation';
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react(),
+    federation({
+      name: '@null-bank/transfer-mfe',
+      filename: 'remoteEntry.js',
+      exposes: {
+        './TransferApp': './src/App',
+      },
+      shared: ['react', 'react-dom'],
+    }),
+  ],
   server: {
-    port: 4201,
+    port: Number(process.env.TRANSFER_MFE_PORT ?? 4500),
+  },
+  build: {
+    target: 'esnext',
   },
 });
