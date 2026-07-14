@@ -14,4 +14,4 @@ Single-context layout with CONTEXT.md at root and docs/adr/. See `docs/agents/do
 
 ### Security rules
 
-- **NEVER** read, open, or display the contents of `.env` files. These files contain secrets and credentials.
+- **NEVER** try to read, open, or display the contents of `.env` files. These files contain secrets and credentials.
