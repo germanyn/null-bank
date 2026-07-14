@@ -18,6 +18,7 @@ export default defineConfig({
     port: Number(process.env.ACCOUNT_MFE_PORT ?? 4300),
   },
   build: {
+    modulePreload: false,
     target: 'esnext',
   },
 });
