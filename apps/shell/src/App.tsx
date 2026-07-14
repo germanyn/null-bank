@@ -1,7 +1,8 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { Sidebar } from './components/Sidebar';
 import { TopBar } from './components/TopBar';
-import { Placeholder } from './components/Placeholder';
+import { MfeRoute } from './components/MfeRoute';
+import { loaderMap } from './mfe-loaders';
 import { routes } from './routes';
 
 export function App() {
@@ -16,7 +17,7 @@ export function App() {
               <Route
                 key={route.path}
                 path={route.path}
-                element={<Placeholder title={route.title} />}
+                element={<MfeRoute loader={loaderMap[route.path]} />}
               />
             ))}
             <Route path="*" element={<Navigate to="/accounts" replace />} />

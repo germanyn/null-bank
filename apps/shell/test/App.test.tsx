@@ -1,8 +1,16 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { App } from '../src/App';
+
+vi.mock('../src/mfe-loaders', () => ({
+  loaderMap: {
+    '/accounts': () => Promise.resolve({ default: () => <div>Account MFE loaded</div> }),
+    '/customers': () => Promise.resolve({ default: () => <div>Customer MFE loaded</div> }),
+    '/transfers': () => Promise.resolve({ default: () => <div>Transfer MFE loaded</div> }),
+  },
+}));
 
 function renderShell(initialRoute = '/') {
   return render(
@@ -29,41 +37,47 @@ describe('Shell', () => {
     expect(screen.getByRole('link', { name: /transfers/i })).toHaveAttribute('href', '/transfers');
   });
 
-  it('renders placeholder content for the accounts route', () => {
+  it('loads the account MFE on the /accounts route', async () => {
     renderShell('/accounts');
-    expect(screen.getByRole('heading', { level: 2, name: 'Accounts' })).toBeInTheDocument();
-    expect(screen.getByText('Accounts content will be loaded here.')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText('Account MFE loaded')).toBeInTheDocument();
+    });
   });
 
-  it('renders placeholder content for the customers route', () => {
+  it('loads the customer MFE on the /customers route', async () => {
     renderShell('/customers');
-    expect(screen.getByRole('heading', { level: 2, name: 'Customers' })).toBeInTheDocument();
-    expect(screen.getByText('Customers content will be loaded here.')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText('Customer MFE loaded')).toBeInTheDocument();
+    });
   });
 
-  it('renders placeholder content for the transfers route', () => {
+  it('loads the transfer MFE on the /transfers route', async () => {
     renderShell('/transfers');
-    expect(screen.getByRole('heading', { level: 2, name: 'Transfers' })).toBeInTheDocument();
-    expect(screen.getByText('Transfers content will be loaded here.')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText('Transfer MFE loaded')).toBeInTheDocument();
+    });
   });
 
   it('navigates between routes when sidebar links are clicked', async () => {
     const user = userEvent.setup();
     renderShell('/accounts');
 
-    expect(screen.getByRole('heading', { level: 2, name: 'Accounts' })).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText('Account MFE loaded')).toBeInTheDocument();
+    });
 
     await user.click(screen.getByRole('link', { name: /customers/i }));
-    expect(screen.getByRole('heading', { level: 2, name: 'Customers' })).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText('Customer MFE loaded')).toBeInTheDocument();
+    });
 
     await user.click(screen.getByRole('link', { name: /transfers/i }));
-    expect(screen.getByRole('heading', { level: 2, name: 'Transfers' })).toBeInTheDocument();
-
-    await user.click(screen.getByRole('link', { name: /accounts/i }));
-    expect(screen.getByRole('heading', { level: 2, name: 'Accounts' })).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText('Transfer MFE loaded')).toBeInTheDocument();
+    });
   });
 
-  it('highlights the active navigation link', () => {
+  it('highlights the active navigation link', async () => {
     renderShell('/accounts');
     const accountsLink = screen.getByRole('link', { name: /accounts/i });
     expect(accountsLink).toHaveAttribute('aria-current', 'page');

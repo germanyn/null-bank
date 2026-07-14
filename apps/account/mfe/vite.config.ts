@@ -6,14 +6,18 @@ export default defineConfig({
   plugins: [
     react(),
     federation({
-      name: '@null-bank/account-mfe',
+      name: 'account-mfe',
       filename: 'remoteEntry.js',
       exposes: {
         './AccountApp': './src/App',
       },
+      shared: ['react', 'react-dom'],
     }),
   ],
   server: {
     port: Number(process.env.ACCOUNT_MFE_PORT ?? 4300),
+  },
+  build: {
+    target: 'esnext',
   },
 });

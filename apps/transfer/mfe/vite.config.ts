@@ -6,16 +6,16 @@ export default defineConfig({
   plugins: [
     react(),
     federation({
-      name: 'transferMfe',
+      name: 'transfer-mfe',
       filename: 'remoteEntry.js',
       exposes: {
-        './TransferApp': './src/App.tsx',
+        './TransferApp': './src/App',
       },
       shared: ['react', 'react-dom'],
     }),
   ],
   server: {
-    port: 4201,
+    port: Number(process.env.TRANSFER_MFE_PORT ?? 4500),
   },
   build: {
     modulePreload: false,

@@ -6,7 +6,7 @@ export default defineConfig({
   plugins: [
     react(),
     federation({
-      name: 'customerMfe',
+      name: 'customer-mfe',
       filename: 'remoteEntry.js',
       exposes: {
         './CustomerApp': './src/App',
@@ -15,7 +15,7 @@ export default defineConfig({
     }),
   ],
   server: {
-    port: 4201,
+    port: Number(process.env.CUSTOMER_MFE_PORT ?? 4400),
   },
   build: {
     modulePreload: false,
