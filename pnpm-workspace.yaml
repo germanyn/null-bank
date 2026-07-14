@@ -1,4 +1,5 @@
 packages:
+  - "apps/shell"
   - "apps/account/svc"
   - "apps/account/mfe"
   - "apps/customer/svc"
