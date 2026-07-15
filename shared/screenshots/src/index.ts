@@ -47,16 +47,9 @@ export async function captureScreenshots(
   const [command, ...args] = devCommand.split(/\s+/);
 
   let serverProcess: ChildProcess | undefined;
-  let serverFailed = false;
 
   try {
-    serverProcess = await startServer(command, args, () => {
-      serverFailed = true;
-    });
-
-    if (serverFailed) {
-      throw new Error(`Dev server exited before becoming ready`);
-    }
+    serverProcess = await startServer(command, args);
 
     await waitOn(baseUrl, { timeout });
 
@@ -92,18 +85,17 @@ export async function captureScreenshots(
 function startServer(
   command: string,
   args: string[],
-  onFail: () => void,
 ): Promise<ChildProcess> {
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     const proc = spawn(command, args, { stdio: 'inherit', shell: true });
 
     proc.on('error', () => {
-      onFail();
+      reject(new Error(`Failed to start dev server: ${command}`));
     });
 
     proc.on('exit', (code) => {
       if (code !== null && code !== 0) {
-        onFail();
+        reject(new Error(`Dev server exited with code ${code}`));
       }
     });
 

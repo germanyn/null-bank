@@ -23,28 +23,20 @@ vi.mock('child_process', () => ({
 vi.mock('fs/promises', () => ({
   default: {
     mkdtemp: vi.fn(),
-    writeFile: vi.fn(),
-    rm: vi.fn(),
-    mkdir: vi.fn(),
   },
   mkdtemp: vi.fn(),
-  writeFile: vi.fn(),
-  rm: vi.fn(),
-  mkdir: vi.fn(),
 }));
 
 import { captureScreenshots } from '../src/index';
 import { chromium } from 'playwright';
 import waitOn from 'wait-on';
 import { spawn } from 'child_process';
-import { mkdtemp, writeFile, rm } from 'fs/promises';
+import { mkdtemp } from 'fs/promises';
 
 const mockedLaunch = vi.mocked(chromium.launch);
 const mockedWaitOn = vi.mocked(waitOn);
 const mockedSpawn = vi.mocked(spawn);
 const mockedMkdtemp = vi.mocked(mkdtemp);
-const mockedWriteFile = vi.mocked(writeFile);
-const mockedRm = vi.mocked(rm);
 
 function createMockPage() {
   return {
@@ -75,8 +67,6 @@ function createMockProcess() {
 beforeEach(() => {
   vi.clearAllMocks();
   mockedMkdtemp.mockResolvedValue('/tmp/screenshots-abc123');
-  mockedWriteFile.mockResolvedValue(undefined);
-  mockedRm.mockResolvedValue(undefined);
 });
 
 afterEach(() => {
@@ -274,13 +264,12 @@ describe('captureScreenshots', () => {
     mockedSpawn.mockReturnValue({
       pid: 12345,
       kill: vi.fn(),
-      on: vi.fn((_event, cb) => {
-        cb(1);
+      on: vi.fn((_event: string, cb: (...args: any[]) => void) => {
+        if (_event === 'exit') cb(1);
       }),
       stderr: { on: vi.fn() },
       stdout: { on: vi.fn() },
     } as any);
-    mockedWaitOn.mockRejectedValue(new Error('timeout'));
 
     await expect(
       captureScreenshots({
@@ -289,7 +278,7 @@ describe('captureScreenshots', () => {
         devCommand: 'pnpm dev',
         baseUrl: 'http://localhost:4200',
       }),
-    ).rejects.toThrow();
+    ).rejects.toThrow('Dev server exited with code 1');
   });
 
   it('saves each screenshot to the correct directory via Playwright', async () => {
