@@ -1,0 +1,16 @@
+{
+  "name": "@null-bank/screenshots",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "playwright": "^1.48.0",
+    "wait-on": "^8.0.0"
+  }
+}
