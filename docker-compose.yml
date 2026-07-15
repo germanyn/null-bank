@@ -23,8 +23,6 @@ services:
     volumes:
       - ./nginx/nginx.conf.template:/etc/nginx/nginx.conf.template:ro
     command: /bin/sh -c "envsubst '$$NGINX_PORT' < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf && nginx -g 'daemon off;'"
-    depends_on:
-      - rabbitmq
 
 volumes:
   rabbitmq_data:

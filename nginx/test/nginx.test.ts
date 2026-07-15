@@ -51,4 +51,13 @@ describe('nginx reverse proxy configuration', () => {
   it('forwards Host header', () => {
     expect(nginxConf).toMatch(/proxy_set_header Host \$host/);
   });
+
+  it('uses HTTP/1.1 for upstream connections', () => {
+    expect(nginxConf).toMatch(/proxy_http_version 1\.1;/);
+    expect(nginxConf).toMatch(/proxy_set_header Connection ""/);
+  });
+
+  it('does not hide Set-Cookie headers from upstream', () => {
+    expect(nginxConf).not.toMatch(/proxy_hide_header Set-Cookie/);
+  });
 });
