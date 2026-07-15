@@ -39,6 +39,7 @@
     "apps/customer/mfe",
     "apps/transfer/svc",
     "apps/transfer/mfe",
+    "nginx",
     "shared/*"
   ],
   "dependencies": {

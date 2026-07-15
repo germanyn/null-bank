@@ -6,6 +6,7 @@ packages:
   - "apps/customer/mfe"
   - "apps/transfer/svc"
   - "apps/transfer/mfe"
+  - "nginx"
   - "shared/*"
 allowBuilds:
   better-sqlite3: true
