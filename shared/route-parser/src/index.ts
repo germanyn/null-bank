@@ -14,24 +14,7 @@ function extractRoutePath(filePath: string): string | null {
 export function parseDiffRoutes(diff: string): string[] {
   if (!diff) return [];
 
-  const lines = diff.split('\n');
   const routes: string[] = [];
-  let isDeleted = false;
-  let newNamePath: string | null = null;
-
-  for (const line of lines) {
-    if (line.startsWith('diff --git')) {
-      isDeleted = false;
-      newNamePath = null;
-    } else if (line === 'deleted file mode 100644' || line.startsWith('--- a/') && !lines.includes('+++ b/')) {
-      isDeleted = true;
-    } else if (line.startsWith('rename to ')) {
-      newNamePath = line.slice('rename to '.length);
-    } else if (line.startsWith('+++ /dev/null')) {
-      isDeleted = true;
-    }
-  }
-
   const seen = new Set<string>();
   const diffBlocks = diff.split(/^diff --git /m).slice(1);
 
